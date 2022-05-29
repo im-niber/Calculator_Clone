@@ -15,6 +15,7 @@
 		6E885FDC2843491F00080872 /* ZeroButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E885FDB2843491F00080872 /* ZeroButtonView.swift */; };
 		6E885FDE284349C400080872 /* NumberButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E885FDD284349C400080872 /* NumberButtonView.swift */; };
 		6E885FE02843522700080872 /* OpButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E885FDF2843522700080872 /* OpButtonView.swift */; };
+		6E885FE428435B0800080872 /* NumberModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E885FE328435B0800080872 /* NumberModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		6E885FDB2843491F00080872 /* ZeroButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeroButtonView.swift; sourceTree = "<group>"; };
 		6E885FDD284349C400080872 /* NumberButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberButtonView.swift; sourceTree = "<group>"; };
 		6E885FDF2843522700080872 /* OpButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpButtonView.swift; sourceTree = "<group>"; };
+		6E885FE328435B0800080872 /* NumberModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				6E885FD92843446B00080872 /* CircleButtonView.swift */,
 				6E885FDB2843491F00080872 /* ZeroButtonView.swift */,
 				6E885FDD284349C400080872 /* NumberButtonView.swift */,
+				6E885FE328435B0800080872 /* NumberModel.swift */,
 			);
 			path = Calculator_Clone;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 				6E885FDC2843491F00080872 /* ZeroButtonView.swift in Sources */,
 				6E885FDE284349C400080872 /* NumberButtonView.swift in Sources */,
 				6E885FCC284342E300080872 /* Calculator_CloneApp.swift in Sources */,
+				6E885FE428435B0800080872 /* NumberModel.swift in Sources */,
 				6E885FE02843522700080872 /* OpButtonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

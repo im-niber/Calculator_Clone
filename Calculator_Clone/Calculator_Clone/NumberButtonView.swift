@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-// ±
+
 struct NumberButtonView: View {
     var moreOp = ["AC", "±", "%"]
     
