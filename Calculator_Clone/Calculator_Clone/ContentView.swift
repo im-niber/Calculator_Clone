@@ -16,31 +16,38 @@ struct ContentView: View {
                 .ignoresSafeArea()
                 .overlay {
                     GeometryReader{ geo in
-                        VStack(alignment: .trailing){
+                        VStack(alignment: .trailing,spacing: 22){
                             Spacer()
-                            Text("\(numberData.data)")
-                                .font(.largeTitle)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white)
-                                .padding()
-                            
+                                Text("\(numberData.visualData)")
+                                    .foregroundColor(.white)
+                                    .fontWeight(.light)
+                                    .modifier(FittingFontSizeModifier())
+                                    
+
                             HStack{
                                 NumberButtonView()
                                     .frame(width: geo.size.width * 0.73, height: geo.size.height * 0.65)
-                                    
+                                
                                 
                                 OpButtonView()
                                     .frame(width: geo.size.width * 0.244, height: geo.size.height * 0.655)
                             }
                         }
-                     
+                        
                     }
-                    
-                    
                 }
         }
     }
 }
+
+struct FittingFontSizeModifier: ViewModifier {
+  func body(content: Content) -> some View {
+    content
+      .font(.system(size: 100))
+      .minimumScaleFactor(0.4)
+  }
+}
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
