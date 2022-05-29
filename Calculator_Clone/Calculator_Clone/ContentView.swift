@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var mainNumber = 0
+    @EnvironmentObject var numberData : NumberModel
     
     var body: some View {
         ZStack{
@@ -18,8 +18,9 @@ struct ContentView: View {
                     GeometryReader{ geo in
                         VStack(alignment: .trailing){
                             Spacer()
-                            Text("\(mainNumber)")
-                                .font(.title)
+                            Text("\(numberData.data)")
+                                .font(.largeTitle)
+                                .fontWeight(.medium)
                                 .foregroundColor(.white)
                                 .padding()
                             
@@ -44,5 +45,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(NumberModel())
     }
 }
