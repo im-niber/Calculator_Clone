@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct Calculator_CloneApp: App {
     @StateObject private var numberData = NumberModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
