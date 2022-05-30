@@ -18,12 +18,10 @@ struct ContentView: View {
                     GeometryReader{ geo in
                         VStack(alignment: .trailing){
                             Spacer()
-                            Text("\(numberData.visualData)")
+                            Text(numberData.changeNumber(numberData.currentNumber))
                                 .foregroundColor(.white)
                                 .fontWeight(.light)
                                 .modifier(FittingFontSizeModifier())
-                            
-                            
                             
                             HStack{
                                 NumberButtonView()
@@ -34,11 +32,8 @@ struct ContentView: View {
                                     .frame(width: geo.size.width * 0.244, height: geo.size.height * 0.655)
                             }
                         }
-                        
-                    }
-                    
-                    
                 }
+            }
         }
     }
 }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NumberButtonView: View {
+    @EnvironmentObject var numberData : NumberModel
+    
     var moreOp = ["AC", "±", "%"]
     
     var body: some View {
@@ -15,7 +17,10 @@ struct NumberButtonView: View {
             HStack{
                 ForEach(moreOp, id: \.self) { i in
                     Button {
-                        print("op2")
+                        i == "AC" ? numberData.deleteButton() : numberData.letterInsert(i)
+                        
+//                        i == "AC" ? numberData.deleteButton() : i == "±" ? numberData.plusMinusButton() : numberData.dividedHundred()
+                        
                     } label: {
                         CircleButtonView(circleColor: "Gray", contentText: "\(i)", contentColor: .black)
                     }
@@ -25,7 +30,7 @@ struct NumberButtonView: View {
             HStack{
                 ForEach(7..<10) { i in
                     Button {
-                        print("hi")
+                        numberData.letterInsert("\(i)")
                     } label: {
                         CircleButtonView(circleColor: "NumberColor", contentText: "\(i)", contentColor: .white)
                     }
@@ -34,7 +39,7 @@ struct NumberButtonView: View {
             HStack{
                 ForEach(4..<7) { i in
                     Button {
-                        print("hi")
+                        numberData.letterInsert("\(i)")
                     } label: {
                         CircleButtonView(circleColor: "NumberColor", contentText: "\(i)", contentColor: .white)
                     }
@@ -43,7 +48,7 @@ struct NumberButtonView: View {
             HStack{
                 ForEach(1..<4) { i in
                     Button {
-                        print("hi")
+                        numberData.letterInsert("\(i)")
                     } label: {
                         CircleButtonView(circleColor: "NumberColor", contentText: "\(i)", contentColor: .white)
                     }
@@ -53,13 +58,13 @@ struct NumberButtonView: View {
             GeometryReader { geo in
                 HStack{
                     Button {
-                        print("0")
+                        numberData.letterInsert("0")
                     } label: {
                         ZeroButtonView()
                     }
                     .frame(width: geo.size.width * 0.66)
                     Button {
-                        print(".")
+                        numberData.letterInsert(".")
                     } label: {
                         CircleButtonView(circleColor: "NumberColor", contentText: ".", contentColor: .white)
                     }
@@ -76,5 +81,6 @@ struct NumberButtonView: View {
 struct NumberButtonView_Previews: PreviewProvider {
     static var previews: some View {
         NumberButtonView()
+            .environmentObject(NumberModel())
     }
 }
