@@ -19,9 +19,10 @@ struct ContentView: View {
                         VStack(alignment: .trailing){
                             Spacer()
                             Text(numberData.changeNumber(numberData.currentNumber))
+                                .font(.system(size: 100))
                                 .foregroundColor(.white)
                                 .fontWeight(.light)
-                                .modifier(FittingFontSizeModifier())
+                                .minimumScaleFactor(0.4)
                             
                                 
                             HStack{
@@ -38,14 +39,6 @@ struct ContentView: View {
                 }
             }
         }
-    }
-}
-
-struct FittingFontSizeModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(.system(size: 100))
-            .minimumScaleFactor(0.4)
     }
 }
 
