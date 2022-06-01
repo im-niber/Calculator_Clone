@@ -23,13 +23,16 @@ struct ContentView: View {
                                 .fontWeight(.light)
                                 .modifier(FittingFontSizeModifier())
                             
+                                
                             HStack{
                                 NumberButtonView()
                                     .frame(width: geo.size.width * 0.73, height: geo.size.height * 0.65)
+                                    .padding(.bottom)
                                 
                                 
                                 OpButtonView()
                                     .frame(width: geo.size.width * 0.244, height: geo.size.height * 0.655)
+                                    .padding(.bottom)
                             }
                         }
                 }
@@ -38,7 +41,6 @@ struct ContentView: View {
     }
 }
 
-
 struct FittingFontSizeModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -46,8 +48,6 @@ struct FittingFontSizeModifier: ViewModifier {
             .minimumScaleFactor(0.4)
     }
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

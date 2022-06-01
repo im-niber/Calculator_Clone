@@ -22,7 +22,9 @@ struct NumberButtonView: View {
 //                        i == "AC" ? numberData.deleteButton() : i == "±" ? numberData.plusMinusButton() : numberData.dividedHundred()
                         
                     } label: {
+                        i == "AC" && numberData.isCbuttonAcitve == true ? CircleButtonView(circleColor: "Gray", contentText: "C", contentColor: .black) :
                         CircleButtonView(circleColor: "Gray", contentText: "\(i)", contentColor: .black)
+                        
                     }
                 }
             }
