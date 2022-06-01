@@ -19,9 +19,9 @@ struct CircleButtonView: View {
                 .fill(Color("\(circleColor)"))
             Text("\(contentText)")
                 .font(.largeTitle)
+                .fontWeight(.semibold)
                 .foregroundColor(contentColor)
         }
-        
     }
 }
 
