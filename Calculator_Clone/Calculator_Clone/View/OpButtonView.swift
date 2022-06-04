@@ -10,7 +10,7 @@ import SwiftUI
 struct OpButtonView: View {
     @EnvironmentObject var numberData : NumberModel
     
-    var opString = ["÷","×","-","+","="]
+    let opString = ["÷","×","-","+","="]
     
     var body: some View {
         VStack(spacing: 25){
@@ -19,7 +19,8 @@ struct OpButtonView: View {
                    // i == "=" ? numberData.doAnswer() : numberData.calc(i)
                     numberData.opButtonActive(i)
                 } label: {
-                    numberData.activeOpButton && numberData.isOps[i]! ? CircleButtonView(circleColor: "White", contentText: "\(i)", contentColor: .orange) :   CircleButtonView(circleColor: "OpColor", contentText: "\(i)", contentColor: .white)
+                    numberData.activeOpButton && numberData.isOps[i]! && i !=
+                    "=" ? CircleButtonView(circleColor: "White", contentText: i, contentColor: .orange) : CircleButtonView(circleColor: "OpColor", contentText: i, contentColor: .white)
 
                 }
             }

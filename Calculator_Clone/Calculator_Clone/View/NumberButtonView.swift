@@ -10,7 +10,7 @@ import SwiftUI
 struct NumberButtonView: View {
     @EnvironmentObject var numberData : NumberModel
     
-    var moreOp = ["AC", "±", "%"]
+    let moreOp = ["AC", "±", "%"]
     
     var body: some View {
         VStack(spacing: 25){
