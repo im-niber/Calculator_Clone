@@ -14,24 +14,33 @@ final class NumberModel: ObservableObject {
     // 내부에서 계산할 때 사용하는 좌항 우항 숫자
     var temp1: Double?
     var temp2: Double?
-    
+
     // AC, C 버튼 on/off
     @Published var isCbuttonAcitve: Bool = false
+    
     // 연산기능을 실행했는지 체크
     var isOp: Bool = false
     
     // 연산자 버튼 체크
-    var activeOpButton: Bool = false
+    @Published var activeOpButton: Bool = false
     
-    var isOps : [String : Bool] = ["+" : false, "-" : false, "×" : false, "÷" : false, "=" : false]
+    @Published var isOps : [String : Bool] = ["+" : false, "-" : false, "×" : false, "÷" : false, "=" : false]
     
-    // 소수점 관련 중복입력 방지, 0. 소수점 뒤 숫자가 없어도 입력 가능하게 하는 조건 체크
+    // 마지막 연산을 무엇을 했는지 체크할 변수
+    var lastOperator: String?
+    
+    // 소수점 관련 중복입력 방지, 0. 같이 소수점 뒤 숫자가 없어도 입력 가능하게 하는 조건 체크
     var isDot: Bool = false
     var isLastDot = false
     var isDeleteDot: Bool = false
     
     // 퍼센트 연산이 있는지 확인
     var isPercent: Bool = false
+    
+    // 답을 냈는지 확인
+    var isAnswer: Bool = false
+    
+    var zeroDivideError: Bool = false
     
     // 999,999,999 는 1e9로 표시되는 것을 방지하기 위함 아래도 마찬가지
     let billionNumber = 1000000000.0
@@ -40,33 +49,15 @@ final class NumberModel: ObservableObject {
     // 숫자는 총 9개만 입력이 가능하므로 밑의 카운트로 체크
     var insertNumCount = 0
     
-    // 숫자 버튼 기능, 소수점 기호, 퍼센트 기호 포함 !
+    // 숫자 버튼, 소수점 기호, 퍼센트 기호의 입력에 맞게 무슨 행위를 할지 결정하는 함수
     func letterInsert(_ input: String) {
-        if input == "0" {
-            if !isDeleteDot && !isPercent {
-                if visualData != "0" && insertNumCount < 9 {
-                    visualData += input
-                    insertNumCount += 1
-                }
-                else if visualData.contains(".") && Double(visualData)! == 0 && insertNumCount < 9 {
-                    visualData += input
-                    insertNumCount += 1
-                }
-            }
-            else {
-                deleteButton()
-                isCbuttonAcitve = true
-            }
-            isLastDot = false
-        }
-        else if input == "%"{
+        if input == "%"{
             if visualData != "0"{
                 if currentNumber == 0 {
                     deleteButton()
                 } else {
                     visualData = String(Double(visualData)! / 100)
                 }
-                
                 isPercent = true
             }
         }
@@ -97,53 +88,66 @@ final class NumberModel: ObservableObject {
             if visualData[visualData.startIndex] == "-" {
                 visualData.removeFirst()
                 visualData.insert("+", at: visualData.startIndex)
-            } else{
+            } else if activeOpButton {
+                deleteButton()
+                isCbuttonAcitve = true
+                visualData.insert("-", at: visualData.startIndex)
+            }
+            else {
                 if visualData[visualData.startIndex] == "+" {
                     visualData.removeFirst()
                 }
                 visualData.insert("-", at: visualData.startIndex)
             }
         }
-        
         else {
-            if visualData == "0" && insertNumCount < 9 && !isPercent{
-                visualData = ""
-                visualData += input
-                insertNumCount += 1
-                isCbuttonAcitve = true
-                activeOpButton = false
-                if isOp == true {
-                    
-                        
-                }
-                // isOp = false
-            }
-            else if !isDeleteDot && !isPercent {
-                if visualData.contains(".") && insertNumCount < 9{
+            if visualData == "0" && insertNumCount < 9 && !isPercent && !isOp{
+                if input != "0" {
+                    visualData = ""
                     visualData += input
                     insertNumCount += 1
+                    isCbuttonAcitve = true
+                    activeOpButton = false
+                }
+            }
+            else if !isDeleteDot && !isPercent {
+                if activeOpButton {
+                    prepareGetNewNumber()
+                }
+                
+                if isAnswer {
+                    prepareGetNewNumber()
+                    visualData += input
+                    insertNumCount += 1
+                    isCbuttonAcitve = true
+                    isAnswer = false
+                }
+                
+                else if visualData.contains(".") && insertNumCount < 9 {
+                    visualData += input
+                    insertNumCount += 1
+                    activeOpButton = false
                 }
                 else if insertNumCount < 9 {
                     visualData += input
                     insertNumCount += 1
+                    activeOpButton = false
                 }
             }
             else if isDeleteDot || isPercent {
                 deleteButton()
-                visualData += input
-                insertNumCount += 1
+            
+                if input != "0" {
+                    visualData += input
+                    insertNumCount += 1
+                }
+                
                 isCbuttonAcitve = true
                 isPercent = false
             }
             isLastDot = false
-            
         }
-        
         insertTempNumber()
-//
-//        print(visualData)
-//        print(currentNumber)
-//        print(insertNumCount)
     }
     
     // 너무 크거나 작은 숫자 변환
@@ -157,14 +161,6 @@ final class NumberModel: ObservableObject {
         if visualData[visualData.index(before: visualData.endIndex)] == "." {
             isLastDot = true
         }
-
-        // 소수점 입력 취소 방지
-//        if isDot {
-//            let checkDotZero = String(num!)
-//            if visualData[visualData.index(before: visualData.endIndex)] == "." {
-//                isLastDot = true
-//            }
-//        }
         
         guard let temp = num else {
             return "0"
@@ -216,18 +212,14 @@ final class NumberModel: ObservableObject {
             if result.contains(".") {
                 let resultPointSeperator = result.components(separatedBy: ".")
                 let resultBackNumbers = resultPointSeperator[resultPointSeperator.index(before: resultPointSeperator.endIndex)]
-                
-                print(pointBackNumbers)
-                print(resultBackNumbers)
-                
+
                 // 숫자는 총 9개 작성 가능하니, 소수점 앞과 뒤를 구분해서
                 // 앞의 숫자 몇개 사용한지 체크해서 적당한 값을 넣어주는 조건문
                 if pointBackNumbers != resultBackNumbers {
-                    let checkedNumberCount = resultPointSeperator[resultPointSeperator.startIndex].count
                     if pointBackNumbers.contains("e") {
                         return result
                     }
-                    return resultPointSeperator[resultPointSeperator.startIndex] + "." + pointBackNumbers.prefix(insertNumCount - checkedNumberCount)
+                    return resultPointSeperator[resultPointSeperator.startIndex] + "." + pointBackNumbers
                 }
                 
             } else {
@@ -246,26 +238,53 @@ final class NumberModel: ObservableObject {
     // 현재 숫자입력된 내용을 지우는 함수
     // 관련된 체크 변수들도 다 초기화
     func deleteButton() {
-        if activeOpButton == true && currentNumber == 0.0 {
+        if zeroDivideError {
+            zeroDivideError = false
+            prepareGetNewNumber()
             activeOpButton = false
+            makeFalseOps()
+        }
+        else if activeOpButton == true && currentNumber == 0.0 && !visualData.contains("-") && !visualData.contains("+"){
+            isOp = false
+            activeOpButton = false
+            makeFalseOps()
+            prepareGetNewNumber()
+            temp1 = nil
+            temp2 = nil
+        }
+        else if isOp {
+            if activeOpButton == false {
+                prepareGetNewNumber()
+                activeOpButton = true
+                isCbuttonAcitve = true
+                
+                if temp1 != nil {
+                    isCbuttonAcitve = false
+                }
+            } else if currentNumber != 0.0 {
+                prepareGetNewNumber()
+                
+                if temp2 != nil {
+                    temp2 = nil
+                }
+                
+            } else if currentNumber == 0.0 {
+                if visualData.contains("-") || visualData.contains("+") {
+                    prepareGetNewNumber()
+                    isCbuttonAcitve = false
+                    temp1 = nil
+                    temp2 = nil
+                }
+            }
         }
         else if isCbuttonAcitve {
             temp2 = nil
-            currentNumber = 0.0
-            insertNumCount = 0
-            visualData = "0"
-            isDot = false
-            isDeleteDot = false
             activeOpButton.toggle()
-            isCbuttonAcitve = false
+            prepareGetNewNumber()
         }
         else {
             temp1 = nil
-            currentNumber = 0.0
-            insertNumCount = 0
-            visualData = "0"
-            isDot = false
-            isDeleteDot = false
+            prepareGetNewNumber()
         }
     }
     
@@ -286,31 +305,51 @@ final class NumberModel: ObservableObject {
     func opButtonActive(_ input: String) {
         switch input {
         case "+":
-            if let isActive = isOps["+"], let _ = temp2 {
-                if isActive == true {
-                    doAnswer("+")
-                }
-            } else if isOp == false {
-                isOps["+"] = true
-                insertTempNumber()
-                isOp = true
-                activeOpButton = true
-            }
+            isOp = true
+            activeOpButton = true
+            opDetailFunc("+")
         case "-":
-            print("hi")
+            isOp = true
+            activeOpButton = true
+            opDetailFunc("-")
         case "×":
-            print("hi")
+            isOp = true
+            activeOpButton = true
+            opDetailFunc("×")
         case "÷":
-            print("hi")
+            isOp = true
+            activeOpButton = true
+            opDetailFunc("÷")
         case "=":
-            for (key, value) in isOps {
-                if value == true {
-                    doAnswer(key)
-                    break
-                }
+            isAnswer = true
+            guard let lastOperator = lastOperator else {
+                return
             }
+            
+            if activeOpButton {
+                activeOpButton = false
+            }
+            
+            opDetailFunc(lastOperator)
+        
         default:
             print("오류")
+        }
+    }
+    
+    func opDetailFunc(_ input: String) {
+        // 다른 연산자가 활성화가 되어있으면 끈다음, 새로운 연산자를 킴.
+        makeFalseOps()
+        
+        isOps[input] = true
+        lastOperator = input
+        
+        if let temp1 = temp1, let temp2 = temp2 {
+            calc(input, l: temp1, r: temp2)
+        } else {
+         //   prepareGetNewNumber()
+            visualData = "0"
+            insertNumCount = 0
         }
     }
     
@@ -335,6 +374,7 @@ final class NumberModel: ObservableObject {
                 temp1 = currentNumber
                 temp2 = nil
             } else {
+                zeroDivideError = true
                 print("오류")
             }
         default:
@@ -342,17 +382,20 @@ final class NumberModel: ObservableObject {
         }
     }
     
-    // 답을 내는 함수
-    func doAnswer(_ input: String) {
-        if let _ = temp2 {
-            print("nonOptional temp2")
-        } else {
-            temp2 = currentNumber
-        }
-        
-        if let isActive = isOps[input] {
-            if isActive {
-                calc(input, l: temp1!, r: temp2!)
+    // 초기화 하는 함수
+    func prepareGetNewNumber() {
+        currentNumber = 0.0
+        visualData = "0"
+        insertNumCount = 0
+        isDot = false
+        isDeleteDot = false
+        isCbuttonAcitve = false
+    }
+    
+    func makeFalseOps() {
+        for (key, value) in isOps {
+            if value == true {
+                isOps[key] = false
             }
         }
     }

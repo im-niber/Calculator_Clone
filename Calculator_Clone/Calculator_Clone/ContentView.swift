@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var numberData : NumberModel
+    @EnvironmentObject var numberData: NumberModel
     
     var body: some View {
         ZStack{
@@ -18,7 +18,7 @@ struct ContentView: View {
                     GeometryReader{ geo in
                         VStack(alignment: .trailing){
                             Spacer()
-                            Text(numberData.changeNumber(numberData.currentNumber))
+                            Text(numberData.zeroDivideError ? "오류" : numberData.changeNumber(numberData.currentNumber))
                                 .font(.system(size: 100))
                                 .foregroundColor(.white)
                                 .fontWeight(.light)
@@ -30,12 +30,11 @@ struct ContentView: View {
                                     .frame(width: geo.size.width * 0.73, height: geo.size.height * 0.65)
                                     .padding(.bottom)
                                 
-                                
                                 OpButtonView()
                                     .frame(width: geo.size.width * 0.244, height: geo.size.height * 0.655)
                                     .padding(.bottom)
-                            }
                         }
+                    }
                 }
             }
         }
